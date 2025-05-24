@@ -1,0 +1,143 @@
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useRouter } from "expo-router";
+import { useEffect } from "react";
+import { BackHandler } from "react-native";
+import handleSubmit from "./spare_parts/Calculocked/app/pages/security";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+export default function App() {
+  const [input, setInput] = useState("0");
+  const [pressCount, setPressCount] = useState(0);
+  const [lastPress, setLastPress] = useState("");
+  const router = useRouter();
+
+  interface ButtonProps {
+    value: string;
+  }
+  
+  const handlePress = async (value: string): Promise<void> => {
+    if (value === "=") {
+      if (lastPress === value) {
+        setPressCount(pressCount + 1);
+      } else {
+        setPressCount(1); // Reset to 1 instead of 0, because this press counts
+      }
+  
+      setLastPress(value);
+  
+      if (pressCount + 1 === 3) {
+        try {
+          const [question, answer] = await Promise.all([
+            AsyncStorage.getItem('securityQuestion'),
+            AsyncStorage.getItem('securityAnswer'),
+          ]);
+  
+          const isQuestionValid = question && question.trim() !== '';
+          const isAnswerValid = answer && answer.trim() !== '';
+  
+          if (isQuestionValid && isAnswerValid) {
+            router.push('./question');
+          } else {
+            router.push('./security');
+          }
+        } catch (error) {
+          console.error('Error retrieving security data:', error);
+          router.push('./security');
+        } finally {
+          setPressCount(0);
+        }
+        return; // Prevent eval from running after routing
+      }
+  
+      try {
+        setInput(eval(input).toString());
+      } catch (error) {
+        setInput("Error");
+      }
+    } else {
+      setPressCount(0);
+      setLastPress(value);
+  
+      if (value === "C") {
+        setInput("0");
+      } else if (value === "%") {
+        setInput((prev) => (parseFloat(prev) / 100).toString());
+      } else if (value === "^") {
+        setInput((prev) => Math.pow(parseFloat(prev), 2).toString());
+      } else if (value === "√") {
+        setInput((prev) => Math.sqrt(parseFloat(prev)).toString());
+      } else {
+        setInput((prev) => (prev === "0" ? value : prev + value));
+      }
+    }
+  };
+
+  const buttons = [
+    "7", "8", "9", "/",
+    "4", "5", "6", "*",
+    "1", "2", "3", "-",
+    "C", "0", "=", "+",
+    "%", "^", "√", ".",
+  ];
+
+  useEffect(() => {
+    const backAction = () => {
+      // Prevent the back navigation by returning true
+      return true;
+    };
+
+    // Add event listener to block back navigation
+    BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    // Cleanup on component unmount
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', backAction);
+    };
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.display}>{input}</Text>
+      <View style={styles.buttonContainer}>
+        {buttons.map((btn) => (
+          <TouchableOpacity key={btn} style={styles.button} onPress={() => handlePress(btn)}>
+            <Text style={styles.buttonText}>{btn}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#282c34",
+  },
+  display: {
+    fontSize: 40,
+    color: "#fff",
+    marginBottom: 20,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+  },
+  button: {
+    width: 80,
+    height: 80,
+    margin: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#61dafb",
+    borderRadius: 10,
+  },
+  buttonText: {
+    fontSize: 24,
+    color: "#000",
+  },
+});
