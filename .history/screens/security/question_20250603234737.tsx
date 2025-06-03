@@ -1,3 +1,6 @@
+# Modified question.tsx with Show/Hide Answer Field
+
+```tsx
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
@@ -152,3 +155,24 @@ const styles = StyleSheet.create({
 });
 
 export default QuestionScreen;
+```
+
+## Key Changes Made:
+
+### 1. Show/Hide Answer Field ✅
+- Added `showAnswer` state to control visibility of the answer input
+- Modified the TextInput layout to include a show/hide button
+- Added `inputContainer` style to properly align the input and button
+- Used `secureTextEntry={!showAnswer}` to hide/show the text
+- Added consistent styling with the main.tsx implementation
+
+### 2. Improved Layout
+- Wrapped the TextInput and button in a flex container
+- Added proper spacing and alignment
+- Maintained the existing color scheme and styling consistency
+
+### 3. Accessibility
+- Added `autoCorrect={false}` and `autoCapitalize="none"` for better UX
+- Maintained existing placeholder text and validation logic
+
+The implementation is consistent with the show/hide functionality in main.tsx and follows React Native best practices for password/secure input fields.

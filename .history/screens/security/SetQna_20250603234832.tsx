@@ -1,3 +1,6 @@
+# Modified SetQna.tsx with Show/Hide Answer Field
+
+```tsx
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
