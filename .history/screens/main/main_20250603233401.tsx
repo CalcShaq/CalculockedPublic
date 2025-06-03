@@ -1,11 +1,8 @@
-
 import React, { useEffect, useState } from 'react';
-
 import {
   View, Text, TextInput, TouchableOpacity, ScrollView,
   Alert, ActivityIndicator, Modal, Pressable, StyleSheet
 } from 'react-native';
-
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import styles from '../../utils/styles/MainStyles'; // Assuming you have a styles.js file for styles
@@ -25,6 +22,7 @@ function decryptData(ciphertext: string): any {
   return JSON.parse(decryptedString);
 }
 
+
 interface Profile {
   id: string;
   title: string;
@@ -39,10 +37,7 @@ const ProfileScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  
-  // NEW: State for showing/hiding passwords in the profile list
-  const [showProfilePasswords, setShowProfilePasswords] = useState<{[key: string]: boolean}>({});
-  
+
   const [editingProfile, setEditingProfile] = useState<Profile | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [editUsername, setEditUsername] = useState('');
@@ -52,18 +47,11 @@ const ProfileScreen = () => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const navigation = useNavigation();
-
-  // NEW: Function to toggle password visibility for a specific profile
-  const toggleProfilePasswordVisibility = (profileId: string) => {
-    setShowProfilePasswords(prev => ({
-      ...prev,
-      [profileId]: !prev[profileId]
-    }));
-  };
-
+  
   useEffect(() => {
     const user = auth().currentUser;
     console.log('Current user:', user?.uid);
+    
     if (!user) {
       Alert.alert('Authentication Error', 'Please log in first');
       setLoading(false);
@@ -72,6 +60,7 @@ const ProfileScreen = () => {
 
     const userId = user.uid;
     console.log('Fetching profiles for user:', userId);
+
     const unsubscribe = firestore()
       .collection('users')
       .doc(userId)
@@ -90,13 +79,14 @@ const ProfileScreen = () => {
           console.error('Firestore error details:', error);
           console.error('Error code:', error.code);
           console.error('Error message:', error.message);
+          
           let errorMessage = 'Could not fetch profiles.';
           if (error.code === 'permission-denied') {
             errorMessage = 'Permission denied. Please check Firestore security rules.';
           } else if (error.code === 'unauthenticated') {
             errorMessage = 'User not authenticated. Please log in again.';
           }
-
+          
           Alert.alert('Error', `${errorMessage}\n\nDetails: ${error.message}`);
           setLoading(false);
         }
@@ -117,14 +107,16 @@ const ProfileScreen = () => {
         Alert.alert('Authentication Error', 'Please log in first');
         return;
       }
-
+      
       const userId = user.uid;
       console.log('Creating profile for user:', userId);
+      
       await firestore()
         .collection('users')
         .doc(userId)
         .collection('profiles')
         .add({ title, username, password });
+
       setTitle('');
       setUsername('');
       setPassword('');
@@ -134,13 +126,14 @@ const ProfileScreen = () => {
     } catch (error: any) {
       console.error('Create profile error:', error);
       console.error('Error code:', error.code);
+      
       let errorMessage = 'Failed to create profile.';
       if (error.code === 'permission-denied') {
         errorMessage = 'Permission denied. Please check Firestore security rules.';
       } else if (error.code === 'unauthenticated') {
         errorMessage = 'User not authenticated. Please log in again.';
       }
-
+      
       Alert.alert('Error', `${errorMessage}\n\nDetails: ${error.message}`);
     }
   };
@@ -161,30 +154,33 @@ const ProfileScreen = () => {
                 Alert.alert('Authentication Error', 'Please log in first');
                 return;
               }
-
+              
               const userId = user.uid;
               console.log('Deleting profile:', id, 'for user:', userId);
+              
               await firestore()
                 .collection('users')
                 .doc(userId)
                 .collection('profiles')
                 .doc(id)
                 .delete();
+                
               console.log('Profile deleted successfully');
             } catch (error: any) {
               console.error('Delete profile error:', error);
               console.error('Error code:', error.code);
+              
               let errorMessage = 'Failed to delete profile.';
               if (error.code === 'permission-denied') {
                 errorMessage = 'Permission denied. Please check Firestore security rules.';
               } else if (error.code === 'unauthenticated') {
                 errorMessage = 'User not authenticated. Please log in again.';
               }
-
+              
               Alert.alert('Error', `${errorMessage}\n\nDetails: ${error.message}`);
             }
-          },
-        },
+          }
+        }
       ]
     );
   };
@@ -210,9 +206,10 @@ const ProfileScreen = () => {
         Alert.alert('Authentication Error', 'Please log in first');
         return;
       }
-
+      
       const userId = user.uid;
       console.log('Updating profile:', editingProfile.id, 'for user:', userId);
+      
       await firestore()
         .collection('users')
         .doc(userId)
@@ -223,6 +220,7 @@ const ProfileScreen = () => {
           username: editUsername,
           password: editPassword,
         });
+
       setEditModalVisible(false);
       setEditingProfile(null);
       setShowEditPassword(false);
@@ -230,13 +228,14 @@ const ProfileScreen = () => {
     } catch (error: any) {
       console.error('Update profile error:', error);
       console.error('Error code:', error.code);
+      
       let errorMessage = 'Failed to update profile.';
       if (error.code === 'permission-denied') {
         errorMessage = 'Permission denied. Please check Firestore security rules.';
       } else if (error.code === 'unauthenticated') {
         errorMessage = 'User not authenticated. Please log in again.';
       }
-
+      
       Alert.alert('Error', `${errorMessage}\n\nDetails: ${error.message}`);
     }
   };
@@ -255,7 +254,7 @@ const ProfileScreen = () => {
 
   const navigateToSettings = () => {
     setMenuVisible(false);
-    navigation.navigate('Settings' as never); // Replace with your navigation logic
+    navigation.navigate('Settings'); // Replace with your navigation logic
     Alert.alert('Settings', 'Navigate to Settings screen');
     // Example: navigation.navigate('Settings');
   };
@@ -272,33 +271,36 @@ const ProfileScreen = () => {
           'Are you sure you want to logout?',
           [
             { text: 'Cancel', style: 'cancel' },
-            {
-              text: 'Logout',
+            { 
+              text: 'Logout', 
               style: 'destructive',
               onPress: () => {
                 auth().signOut().catch(error => {
                   console.error('Logout error:', error);
+                  
                 });
-                navigation.replace('Welcome' as never);
-              },
-            },
+                navigation.replace('Welcome');
+              }
+            }
           ]
         );
         break;
-      case 'lockapp':
-        navigation.replace('Calculator' as never);
-        break;
       default:
         break;
+        case 'lockapp':
+          navigation.replace('Calculator');
+          break;
     }
   };
 
   // Show authentication prompt if user is not logged in
   if (!auth().currentUser) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
         <Text style={styles.heading}>Authentication Required</Text>
-        <Text style={styles.label}>Please log in to access your profiles</Text>
+        <Text style={{ textAlign: 'center', marginBottom: 20, color: '#666' }}>
+          Please log in to access your profiles
+        </Text>
       </View>
     );
   }
@@ -308,55 +310,135 @@ const ProfileScreen = () => {
       {/* Header with Burger Menu */}
       <View style={styles.header}>
         <TouchableOpacity
+          style={styles.burgerButton}
           onPress={() => setMenuVisible(!menuVisible)}
-          style={styles.menuButton}
         >
-          <Text style={styles.menuIcon}>☰</Text>
+          <View style={styles.burgerLine} />
+          <View style={styles.burgerLine} />
+          <View style={styles.burgerLine} />
         </TouchableOpacity>
-        <Text style={styles.heading}>Profile Manager</Text>
+        
+        <Text style={styles.headerTitle}>Profile Manager</Text>
+        
+        <View style={styles.headerPlaceholder} />
       </View>
 
       {/* Dropdown Menu */}
       {menuVisible && (
-        <View style={styles.dropdown}>
+        <View style={styles.menuDropdown}>
           <TouchableOpacity
+            style={styles.menuItem}
             onPress={() => handleMenuOption('settings')}
-            style={styles.menuItem}
           >
-            <Text style={styles.menuText}>⚙️ Settings</Text>
+            <Text style={styles.menuItemText}>⚙️ Settings</Text>
           </TouchableOpacity>
           <TouchableOpacity
+            style={styles.menuItem}
             onPress={() => handleMenuOption('logout')}
-            style={styles.menuItem}
           >
-            <Text style={styles.menuText}>🚪 Logout</Text>
+            
+            <Text style={styles.menuItemText}>🚪 Logout</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => handleMenuOption('lockapp')}
             style={styles.menuItem}
+            onPress={() => handleMenuOption('lockapp')}
           >
-            <Text style={styles.menuText}>🔒 Calculock app</Text>
+            <Text style={styles.menuItemText}>Calculock app</Text>
           </TouchableOpacity>
         </View>
+        
       )}
 
-      <ScrollView style={styles.scrollView}>
-        {!showCreateForm && (
-          <TouchableOpacity
-            style={styles.createButton}
-            onPress={() => setShowCreateForm(true)}
-          >
-            <Text style={styles.createButtonText}>+ Create New Profile</Text>
-          </TouchableOpacity>
-        )}
 
-        {/* Create Profile Form */}
-        {showCreateForm && (
-          <View style={styles.createForm}>
-            <Text style={styles.formTitle}>Create New Profile</Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Profile Title (e.g., Work Account, Personal, etc.)"
+        placeholderTextColor={'#D3D3D3'}
+        value={title}
+        onChangeText={setTitle}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Username"
+        placeholderTextColor={'#D3D3D3'}
+        value={username}
+        onChangeText={setUsername}
+        autoCapitalize="none"
+      />
+      
+      <View style={styles.passwordContainer}>
+        <TextInput
+          style={[styles.input, styles.passwordInput]}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={!showPassword}
+          placeholderTextColor={'#D3D3D3'}
+          autoCapitalize="none"
+        />
+        <TouchableOpacity
+          style={styles.eyeButton}
+          onPress={() => setShowPassword(!showPassword)}
+        >
+          <Text style={styles.eyeText}>{showPassword ? 'Hide' : 'Show'}</Text>
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity style={styles.createButton} onPress={createProfile}>
+        <Text style={styles.createButtonText}>Create Profile</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.sectionHeading}>Your Profiles ({profiles.length})</Text>
+
+      {loading ? (
+        <ActivityIndicator size="large" color="#0077cc" style={{ marginTop: 30 }} />
+      ) : (
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          {profiles.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>No profiles found</Text>
+              <Text style={styles.emptySubtext}>Create your first profile above!</Text>
+            </View>
+          ) : (
+            profiles.map(profile => (
+              <TouchableOpacity
+                key={profile.id}
+                style={styles.profileCard}
+                onPress={() => handleProfileOptions(profile)}
+                activeOpacity={0.7}
+              >
+                <View style={styles.profileHeader}>
+                  <Text style={styles.profileTitle}>{profile.title}</Text>
+                  <Text style={styles.tapHint}>Tap to edit</Text>
+                </View>
+                
+                <View style={styles.profileDetail}>
+                  <Text style={styles.profileLabel}>Username:</Text>
+                  <Text style={styles.profileValue}>{profile.username}</Text>
+                </View>
+                
+                <View style={styles.profileDetail}>
+                  <Text style={styles.profileLabel}>Password:</Text>
+                  <Text style={styles.profileValue}>
+                    {'•'.repeat(Math.min(profile.password.length, 12))}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ))
+          )}
+        </ScrollView>
+      )}
+
+      {/* Create Profile Modal */}
+      <Modal visible={showCreateForm} animationType="slide" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalHeading}>Create New Profile</Text>
+
             <TextInput
               style={styles.input}
-              placeholder="Title (e.g., Gmail, Facebook)"
+              placeholder="Profile Title (e.g., Work Account, Personal, etc.)"
               value={title}
               onChangeText={setTitle}
             />
@@ -365,7 +447,9 @@ const ProfileScreen = () => {
               placeholder="Username"
               value={username}
               onChangeText={setUsername}
+              autoCapitalize="none"
             />
+            
             <View style={styles.passwordContainer}>
               <TextInput
                 style={[styles.input, styles.passwordInput]}
@@ -373,22 +457,25 @@ const ProfileScreen = () => {
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
+                autoCapitalize="none"
               />
               <TouchableOpacity
-                style={styles.showHideButton}
+                style={styles.eyeButton}
                 onPress={() => setShowPassword(!showPassword)}
               >
-                <Text style={styles.showHideText}>
-                  {showPassword ? 'Hide' : 'Show'}
-                </Text>
+                <Text style={styles.eyeText}>{showPassword ? 'Hide' : 'Show'}</Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.formButtons}>
-              <TouchableOpacity style={styles.submitButton} onPress={createProfile}>
-                <Text style={styles.submitButtonText}>Create Profile</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.cancelButton}
+
+            <View style={styles.modalButtonRow}>
+              <Pressable
+                style={[styles.modalButton, { backgroundColor: '#3498db' }]}
+                onPress={createProfile}
+              >
+                <Text style={styles.modalButtonText}>Create Profile</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.modalButton, { backgroundColor: '#95a5a6' }]}
                 onPress={() => {
                   setShowCreateForm(false);
                   setTitle('');
@@ -397,79 +484,22 @@ const ProfileScreen = () => {
                   setShowPassword(false);
                 }}
               >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
+                <Text style={styles.modalButtonText}>Cancel</Text>
+              </Pressable>
             </View>
           </View>
-        )}
-
-        {/* Profiles List */}
-        <View style={styles.profilesSection}>
-          <Text style={styles.sectionTitle}>Your Profiles ({profiles.length})</Text>
-          {loading ? (
-            <ActivityIndicator size="large" color="#0066cc" />
-          ) : (
-            <View>
-              {profiles.length === 0 ? (
-                <View style={styles.emptyState}>
-                  <Text style={styles.emptyText}>No profiles found</Text>
-                  <Text style={styles.emptySubtext}>Create your first profile above!</Text>
-                </View>
-              ) : (
-                profiles.map(profile => (
-                  <TouchableOpacity
-                    key={profile.id}
-                    onPress={() => handleProfileOptions(profile)}
-                    activeOpacity={0.7}
-                    style={styles.profileCard}
-                  >
-                    <View style={styles.profileHeader}>
-                      <Text style={styles.profileTitle}>{profile.title}</Text>
-                      <Text style={styles.tapToEdit}>Tap to edit or delete</Text>
-                    </View>
-                    <View style={styles.profileDetails}>
-                      <Text style={styles.detailLabel}>Username:</Text>
-                      <Text style={styles.detailValue}>{profile.username}</Text>
-                    </View>
-                    <View style={styles.profileDetails}>
-                      <Text style={styles.detailLabel}>Password:</Text>
-                      <View style={styles.passwordDisplayContainer}>
-                        <Text style={styles.detailValue}>
-                          {showProfilePasswords[profile.id] 
-                            ? profile.password 
-                            : '•'.repeat(Math.min(profile.password.length, 12))}
-                        </Text>
-                        <TouchableOpacity
-                          style={styles.showHideButtonSmall}
-                          onPress={() => toggleProfilePasswordVisibility(profile.id)}
-                        >
-                          <Text style={styles.showHideTextSmall}>
-                            {showProfilePasswords[profile.id] ? 'Hide' : 'Show'}
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                ))
-              )}
-            </View>
-          )}
         </View>
-      </ScrollView>
+      </Modal>
 
       {/* Edit Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={editModalVisible}
-        onRequestClose={() => setEditModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
+      <Modal visible={editModalVisible} animationType="slide" transparent>
+        <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Edit Profile</Text>
+            <Text style={styles.modalHeading}>Edit Profile</Text>
+
             <TextInput
               style={styles.input}
-              placeholder="Title"
+              placeholder="Profile Title"
               value={editTitle}
               onChangeText={setEditTitle}
             />
@@ -478,7 +508,9 @@ const ProfileScreen = () => {
               placeholder="Username"
               value={editUsername}
               onChangeText={setEditUsername}
+              autoCapitalize="none"
             />
+            
             <View style={styles.passwordContainer}>
               <TextInput
                 style={[styles.input, styles.passwordInput]}
@@ -486,29 +518,32 @@ const ProfileScreen = () => {
                 value={editPassword}
                 onChangeText={setEditPassword}
                 secureTextEntry={!showEditPassword}
+                autoCapitalize="none"
               />
               <TouchableOpacity
-                style={styles.showHideButton}
+                style={styles.eyeButton}
                 onPress={() => setShowEditPassword(!showEditPassword)}
               >
-                <Text style={styles.showHideText}>
-                  {showEditPassword ? 'Hide' : 'Show'}
-                </Text>
+                <Text style={styles.eyeText}>{showEditPassword ? 'Hide' : 'Show'}</Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.submitButton} onPress={saveProfileEdit}>
-                <Text style={styles.submitButtonText}>Save Changes</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.cancelButton}
+
+            <View style={styles.modalButtonRow}>
+              <Pressable
+                style={[styles.modalButton, { backgroundColor: '#4caf50' }]}
+                onPress={saveProfileEdit}
+              >
+                <Text style={styles.modalButtonText}>Save Changes</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.modalButton, { backgroundColor: '#f44336' }]}
                 onPress={() => {
                   setEditModalVisible(false);
                   setShowEditPassword(false);
                 }}
               >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
+                <Text style={styles.modalButtonText}>Cancel</Text>
+              </Pressable>
             </View>
           </View>
         </View>
@@ -516,46 +551,5 @@ const ProfileScreen = () => {
     </View>
   );
 };
-
-// Additional styles for the new features
-const additionalStyles = StyleSheet.create({
-  passwordDisplayContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  showHideButtonSmall: {
-    marginLeft: 10,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 4,
-  },
-  showHideTextSmall: {
-    fontSize: 12,
-    color: '#0066cc',
-    fontWeight: '500',
-  },
-  passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'relative',
-  },
-  passwordInput: {
-    flex: 1,
-    marginRight: 10,
-  },
-  showHideButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 6,
-  },
-  showHideText: {
-    fontSize: 14,
-    color: '#0066cc',
-    fontWeight: '500',
-  },
-});
 
 export default ProfileScreen;

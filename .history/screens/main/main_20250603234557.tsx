@@ -559,3 +559,5 @@ const additionalStyles = StyleSheet.create({
 });
 
 export default ProfileScreen;
+```
+

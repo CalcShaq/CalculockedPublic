@@ -1,4 +1,6 @@
+# Modified main.tsx with Show/Hide Password for Profile List
 
+```tsx
 import React, { useEffect, useState } from 'react';
 
 import {
@@ -559,3 +561,21 @@ const additionalStyles = StyleSheet.create({
 });
 
 export default ProfileScreen;
+```
+
+## Key Changes Made:
+
+### 1. Show/Hide Password for Profile List ✅
+- Added `showProfilePasswords` state to track visibility for each profile
+- Added `toggleProfilePasswordVisibility` function to toggle password visibility
+- Added show/hide button next to each password in the profile list
+- Passwords now display as dots when hidden, actual text when shown
+
+### 2. Text Change ✅
+- Changed "Tap to edit" to "Tap to edit or delete" for clarity
+
+### 3. Consistent Styling
+- Added new styles for the password display container and show/hide buttons
+- Maintained consistency with existing show/hide functionality in the create/edit forms
+
+The implementation follows React Native best practices and maintains the existing code structure while adding the requested functionality.

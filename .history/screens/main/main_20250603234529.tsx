@@ -1,4 +1,6 @@
+# Modified main.tsx with Show/Hide Password for Profile List
 
+```tsx
 import React, { useEffect, useState } from 'react';
 
 import {
@@ -559,3 +561,5 @@ const additionalStyles = StyleSheet.create({
 });
 
 export default ProfileScreen;
+```
+
