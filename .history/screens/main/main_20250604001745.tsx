@@ -37,7 +37,6 @@ const ProfileScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showAllPasswords, setShowAllPasswords] = useState(false); // New state for showing all passwords
 
   const [editingProfile, setEditingProfile] = useState<Profile | null>(null);
   const [editTitle, setEditTitle] = useState('');
@@ -350,13 +349,7 @@ const ProfileScreen = () => {
         
       )}
 
-      {/* Menu Overlay */}
-      {menuVisible && (
-        <Pressable
-          style={styles.menuOverlay}
-          onPress={() => setMenuVisible(false)}
-        />
-      )}
+
 
       <TextInput
         style={styles.input}
@@ -388,7 +381,7 @@ const ProfileScreen = () => {
           style={styles.eyeButton}
           onPress={() => setShowPassword(!showPassword)}
         >
-          <Text style={styles.eyeText}>{showPassword ? 'Hide Password' : 'Show Password'}</Text>
+          <Text style={styles.eyeText}>{showPassword ? 'Hide' : 'Show'}</Text>
         </TouchableOpacity>
       </View>
 
@@ -396,31 +389,7 @@ const ProfileScreen = () => {
         <Text style={styles.createButtonText}>Create Profile</Text>
       </TouchableOpacity>
 
-      {/* Section Header with Password Toggle */}
-      <View style={styles.profilesHeader}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Text style={styles.sectionHeading}>Your Profiles ({profiles.length})</Text>
-          {profiles.length > 0 && (
-            <TouchableOpacity
-              onPress={() => setShowAllPasswords(!showAllPasswords)}
-              style={{
-                backgroundColor: showAllPasswords ? '#e74c3c' : '#3498db',
-                paddingHorizontal: 12,
-                paddingVertical: 6,
-                borderRadius: 8,
-              }}
-            >
-              <Text style={{
-                color: '#fff',
-                fontSize: 12,
-                fontWeight: '600',
-              }}>
-                {showAllPasswords ? 'Hide All Passwords' : 'Show All Passwords'}
-              </Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
+      <Text style={styles.sectionHeading}>Your Profiles ({profiles.length})</Text>
 
       {loading ? (
         <ActivityIndicator size="large" color="#0077cc" style={{ marginTop: 30 }} />
@@ -441,7 +410,7 @@ const ProfileScreen = () => {
               >
                 <View style={styles.profileHeader}>
                   <Text style={styles.profileTitle}>{profile.title}</Text>
-                  <Text style={styles.tapHint}>Tap to edit or delete</Text>
+                  <Text style={styles.tapHint}>Tap to edit</Text>
                 </View>
                 
                 <View style={styles.profileDetail}>
@@ -452,10 +421,7 @@ const ProfileScreen = () => {
                 <View style={styles.profileDetail}>
                   <Text style={styles.profileLabel}>Password:</Text>
                   <Text style={styles.profileValue}>
-                    {showAllPasswords 
-                      ? profile.password 
-                      : '•'.repeat(Math.min(profile.password.length, 12))
-                    }
+                    {'•'.repeat(Math.min(profile.password.length, 12))}
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -497,7 +463,7 @@ const ProfileScreen = () => {
                 style={styles.eyeButton}
                 onPress={() => setShowPassword(!showPassword)}
               >
-                <Text style={styles.eyeText}>{showPassword ? 'Hide Password' : 'Show Password'}</Text>
+                <Text style={styles.eyeText}>{showPassword ? 'Hide' : 'Show'}</Text>
               </TouchableOpacity>
             </View>
 
@@ -558,7 +524,7 @@ const ProfileScreen = () => {
                 style={styles.eyeButton}
                 onPress={() => setShowEditPassword(!showEditPassword)}
               >
-                <Text style={styles.eyeText}>{showEditPassword ? 'Hide Password' : 'Show Password'}</Text>
+                <Text style={styles.eyeText}>{showEditPassword ? 'Hide' : 'Show'}</Text>
               </TouchableOpacity>
             </View>
 
