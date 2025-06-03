@@ -10,7 +10,7 @@ import CalculatorScreen from '../screens/security/Calculator';
 import SettingsPage from '../screens/main/settings';
 import ProfileScreen from '../screens/main/main';
 import SetQna from '../screens/security/SetQna';
-import QuestionScreen from '../screens/security/question';
+import QuestionScreen from '../screens/security/questionuestion';
 
 const Stack = createStackNavigator();
 
