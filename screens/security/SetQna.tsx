@@ -1,46 +1,54 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import type { StackNavigationProp } from '@react-navigation/stack';
+// Import necessary libraries and components
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage for persistent storage
+import React, { useState } from 'react'; // Import React and hooks for managing state
+import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native'; // Import necessary components from React Native
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook for navigation
+import type { StackNavigationProp } from '@react-navigation/stack'; // Import navigation types from React Navigation
 
-type RootStackParamList = {
-  SetQna: undefined;
-  QuestionScreen: undefined;
+// Define the navigation parameters for the app
+type RootStackParamList = { // Define the navigation parameters for the app
+  SetQna: undefined; // SetQna screen does not require any parameters
+  QuestionScreen: undefined; // QuestionScreen does not require any parameters
 };
 
-type NavigationProp = StackNavigationProp<RootStackParamList>;
+// Define the navigation prop type for SetQna screen
+type NavigationProp = StackNavigationProp<RootStackParamList>; // Use StackNavigationProp to define navigation prop type
 
-const SetQna: React.FC = () => {
-  const [question, setQuestion] = useState('');
-  const [answer, setAnswer] = useState('');
+// Define the SetQna component
+const SetQna: React.FC = () => { // Define the SetQna component
+  const [question, setQuestion] = useState(''); // State to hold the security question input
+  const [answer, setAnswer] = useState(''); // State to hold the security answer input
   
-  // NEW: State for showing/hiding the answer field
-  const [showAnswer, setShowAnswer] = useState(false);
+  // State to manage show/hide functionality for the answer input
+  const [showAnswer, setShowAnswer] = useState(false); // State to manage show/hide functionality for the answer input
   
-  const navigation = useNavigation<NavigationProp>();
+  // Use useNavigation hook to get navigation object
+  const navigation = useNavigation<NavigationProp>(); // Use useNavigation hook to get navigation object
 
-  const handleSave = async () => {
-    if (question.trim() === '' || answer.trim() === '') {
-      Alert.alert('Error', 'Both the question and answer fields are required.');
-      return;
+  // Function to handle saving the security question and answer
+  const handleSave = async () => { // Function to handle saving the security question and answer
+    if (question.trim() === '' || answer.trim() === '') { // Check if the question or answer is empty
+      Alert.alert('Error', 'Both the question and answer fields are required.'); // Show an alert if either the question or answer is empty
+      return; // Exit the function if either the question or answer is empty
     }
 
-    try {
-      await AsyncStorage.setItem('question', question.trim());
-      await AsyncStorage.setItem('answer', answer.trim());
-      await AsyncStorage.setItem('hasQna', 'true'); // Save the Q&A setup flag
-      Alert.alert('Success', 'Security question and answer saved.', [
+    // Save the question and answer to AsyncStorage
+    try { // Attempt to save the question and answer to AsyncStorage
+      await AsyncStorage.setItem('question', question.trim()); // Save the question to AsyncStorage
+      await AsyncStorage.setItem('answer', answer.trim()); // Save the answer to AsyncStorage
+      await AsyncStorage.setItem('hasQna', 'true'); // Indicate that a security question has been set
+      Alert.alert('Success', 'Security question and answer saved.', [ // Show a success alert with an OK button
         {
           text: 'OK',
-          onPress: () => navigation.replace('Question'),
+          onPress: () => navigation.replace('Question'), // Navigate to Question screen when OK is pressed
         },
       ]);
-    } catch (error) {
-      Alert.alert('Error', 'Failed to save your security question.');
+    } catch (error) { // Catch any errors that occur while saving the data
+      Alert.alert('Error', 'Failed to save your security question.'); // Show an alert if there is an error saving the security question
     }
   };
 
+  // Render the SetQna component, which includes inputs for the security question and answer
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Set Security Question</Text>
@@ -83,6 +91,7 @@ const SetQna: React.FC = () => {
   );
 };
 
+// Define styles for the SetQna component
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -134,4 +143,5 @@ const styles = StyleSheet.create({
   },
 });
 
+// Export the SetQna component as the default export
 export default SetQna;

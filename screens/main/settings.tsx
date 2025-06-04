@@ -1,9 +1,9 @@
 // Import necessary libraries and components
 import React, { useState } from "react"; // Import React and useState hook for managing state
 import {View, Text, Switch, Button, StyleSheet, Alert,} from "react-native"; // Import necessary components from React Native
-import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import asyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native"; // Import useNavigation hook for navigation
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack"; // Import NativeStackNavigationProp for type safety in navigation
+import asyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage for persistent storage
 
 // Define RootStackParamList
 type RootStackParamList = { // Define the navigation parameters for the app
