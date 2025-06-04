@@ -1,31 +1,36 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
-import auth from '@react-native-firebase/auth';
+// Import necessary libraries and components
+import React, { useState } from 'react'; // Import React and useState hook for managing state
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native'; // Import necessary components from React Native
+import auth from '@react-native-firebase/auth'; // Import Firebase authentication module
 
-const SignUpScreen = ({ navigation }: { navigation: any }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+// Define the SignUpScreen component
+const SignUpScreen = ({ navigation }: { navigation: any }) => { // Define the SignUpScreen component
+  const [email, setEmail] = useState(''); // State to hold the email input
+  const [password, setPassword] = useState(''); // State to hold the password input
+  const [loading, setLoading] = useState(false); // State to manage loading state during sign up
 
-  const handleSignUp = async () => {
-    if (!email.trim() || !password.trim()) {
-      Alert.alert('Validation Error', 'Email and password are required.');
-      return;
+  // Function to handle sign up
+  const handleSignUp = async () => { // Check if email and password are provided
+    if (!email.trim() || !password.trim()) { // Check if email and password are provided
+      Alert.alert('Validation Error', 'Email and password are required.'); // Show an alert if validation fails
+      return; // Exit the function if validation fails
     }
 
-    setLoading(true);
-    try {
-      await auth().createUserWithEmailAndPassword(email.trim(), password);
-      Alert.alert('Success', 'Account created successfully!');
-      navigation.replace('Calculator');
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to sign up.';
-      Alert.alert('Sign Up Error', message);
-    } finally {
-      setLoading(false);
+    setLoading(true); // Set loading state to true to indicate sign up process has started
+    try { 
+      await auth().createUserWithEmailAndPassword(email.trim(), password); // Attempt to create a new user with Firebase authentication
+      Alert.alert('Success', 'Account created successfully!'); // Show success alert on successful sign up
+      navigation.replace('Calculator'); // Navigate to the Calculator screen after successful sign up
+    } catch (error) { // Catch any errors during the sign up process
+      const message = error instanceof Error ? error.message : 'Failed to sign up.'; // Get the error message
+      Alert.alert('Sign Up Error', message); // Show an alert with the error message
+    } finally { // Ensure loading state is reset after the sign up attempt
+      setLoading(false); // Set loading state back to false
     }
   };
 
+  // Render the sign up screen
+  // It includes input fields for email and password, a sign up button, and a link to log in
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Sign Up</Text>
@@ -66,10 +71,11 @@ const SignUpScreen = ({ navigation }: { navigation: any }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, justifyContent: 'center', alignItems: 'center', backgroundColor: '#e6f7ff' },
-  heading: { fontSize: 32, fontWeight: 'bold', color: '#004080', marginBottom: 16, textAlign: 'center' },
-  input: {
+// Define styles for the SignUpScreen component
+const styles = StyleSheet.create({ // Define styles for the SignUpScreen component
+  container: { flex: 1, padding: 24, justifyContent: 'center', alignItems: 'center', backgroundColor: '#e6f7ff' }, // Main container style
+  heading: { fontSize: 32, fontWeight: 'bold', color: '#004080', marginBottom: 16, textAlign: 'center' }, // Heading style
+  input: { // Styles for the input fields
     width: '80%',
     backgroundColor: '#fff',
     borderColor: '#ccc',
@@ -79,15 +85,16 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     color: '#333',
   },
-  button: {
+  button: { // Styles for the sign up button
     width: '80%',
     backgroundColor: '#004080',
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: 'center',
   },
-  buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 18 },
-  linkText: { color: '#004080', fontWeight: '600', fontSize: 16, textDecorationLine: 'underline' },
+  buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 18 }, // Text style for the button
+  linkText: { color: '#004080', fontWeight: '600', fontSize: 16, textDecorationLine: 'underline' }, // Style for the link text
 });
 
+// Export the SignUpScreen component as the default export
 export default SignUpScreen;

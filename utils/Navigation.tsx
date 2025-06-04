@@ -1,21 +1,24 @@
+// Importing necessary modules for styling in React Native
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-// Import all screens
-import WelcomeScreen from '../screens/LogUser/welcome';
-import LoginScreen from '../screens/LogUser/login';
-import SignUpScreen from '../screens/LogUser/signup';
-import CalculatorScreen from '../screens/security/Calculator';
-import SettingsPage from '../screens/main/settings';
-import ProfileScreen from '../screens/main/main';
-import SetQna from '../screens/security/SetQna';
-import QuestionScreen from '../screens/security/question';
+// Import all screens for the application
+import WelcomeScreen from '../screens/LogUser/welcome'; // Import the Welcome screen
+import LoginScreen from '../screens/LogUser/login'; // Import the Login screen
+import SignUpScreen from '../screens/LogUser/signup'; // Import the Sign Up screen
+import CalculatorScreen from '../screens/security/Calculator'; // Import the Calculator screen
+import SettingsPage from '../screens/main/settings'; // Import the Settings screen
+import ProfileScreen from '../screens/main/main'; // Import the Profile screen
+import SetQna from '../screens/security/SetQna'; // Import the SetQna screen for setting security questions
+import QuestionScreen from '../screens/security/question'; // Import the Question screen for answering security questions
 
-const Stack = createStackNavigator();
+// Create a stack navigator for the application
+const Stack = createStackNavigator(); // Create a stack navigator instance
 
-export default function NavigationProvider() {
-  return (
+// Export the NavigationProvider component which wraps the stack navigator
+export default function NavigationProvider() { // NavigationProvider component that wraps the stack navigator
+  return ( // Return the NavigationContainer with the stack navigator
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Calculator">
         {/* Welcome Screen */}

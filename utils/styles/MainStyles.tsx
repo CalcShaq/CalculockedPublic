@@ -1,5 +1,8 @@
+// Import React Native components and styles
 import { StyleSheet } from "react-native";
 
+// Styles for the main application
+// This file contains styles for the main application, including header, buttons, inputs, and other UI elements.
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
@@ -287,4 +290,5 @@ const styles = StyleSheet.create({
   },
 });
 
+// Export the styles for use in other components
 export default styles;
